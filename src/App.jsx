@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const navItems = [
   { id: 'home', label: 'Home' },
@@ -35,18 +35,24 @@ const trustPoints = [
 
 const projects = [
   {
-    title: 'FitZone Gym',
-    description: 'A high-energy gym website focused on memberships and class bookings.',
-  },
-  {
-    title: 'SmileCare Dental',
+    title: 'UrbanFit Gym - High-Converting Fitness Website',
     description:
-      'A trusted dental clinic website with clean design and lead-focused user flow.',
-  },
-  {
-    title: 'Urban Bites',
-    description:
-      'A modern restaurant website featuring menu highlights and table reservation CTA.',
+      'Designed and developed a high-converting fitness website focused on increasing gym memberships.',
+    details:
+      'The website is built with a strong focus on user experience, clear call-to-actions, and trust-building elements such as testimonials, pricing plans, and transformation-focused messaging.',
+    impact:
+      'Optimized for performance, responsiveness, and conversion to help fitness businesses attract and retain more customers.',
+    tags: [
+      'React',
+      'Tailwind CSS',
+      'Framer Motion',
+      'Responsive Design',
+      'Conversion-Focused UI',
+    ],
+    badge: 'Conversion-Focused Project',
+    image:
+      'https://s.wordpress.com/mshots/v1/https://urbanfit-gym.netlify.app/?w=1600',
+    liveDemo: 'https://urbanfit-gym.netlify.app/',
   },
 ]
 
@@ -100,6 +106,61 @@ function Card({ title, description, children }) {
   )
 }
 
+function ProjectPreview({ url, title }) {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [showFallback, setShowFallback] = useState(false)
+  const timeoutRef = useRef(null)
+
+  useEffect(() => {
+    timeoutRef.current = setTimeout(() => {
+      setShowFallback(true)
+    }, 4500)
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [url])
+
+  return (
+    <div className="relative h-64 overflow-hidden border-b border-slate-200/80 bg-slate-950 sm:h-72 dark:border-slate-800">
+      {!showFallback ? (
+        <iframe
+          src={url}
+          title={`${title} live preview`}
+          className="h-full w-full bg-white"
+          loading="lazy"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          referrerPolicy="strict-origin-when-cross-origin"
+          onLoad={() => {
+            setIsLoaded(true)
+            setShowFallback(false)
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current)
+            }
+          }}
+        />
+      ) : (
+        <div className="flex h-full flex-col items-center justify-center gap-2 bg-slate-100 px-6 text-center dark:bg-slate-900">
+          <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+            Preview not available in embed mode
+          </p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            Some sites block iframe previews for security reasons. Use Live Demo to view it.
+          </p>
+        </div>
+      )}
+
+      {!isLoaded && !showFallback && (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-950/70 text-sm font-medium text-slate-100">
+          Loading live preview...
+        </div>
+      )}
+    </div>
+  )
+}
+
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window === 'undefined') {
@@ -111,6 +172,7 @@ function App() {
     return savedTheme ? savedTheme === 'dark' : preferredDark
   })
   const [activeSection, setActiveSection] = useState('home')
+  const [expandedProject, setExpandedProject] = useState(null)
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode)
@@ -230,21 +292,86 @@ function App() {
         <section id="projects" className="scroll-mt-28">
           <SectionTitle
             title="Projects"
-            subtitle="A few website concepts built for business-focused industries."
+            subtitle="Client-focused case studies built to drive measurable business growth."
           />
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-2">
             {projects.map((project) => (
-              <Card key={project.title} title={project.title} description={project.description}>
-                <div className="mt-5 flex h-40 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-100 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-400">
-                  Image Placeholder
+              <article
+                key={project.title}
+                className="group overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-200/40 dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20 dark:hover:shadow-indigo-900/20"
+              >
+                <div className="relative">
+                  <ProjectPreview url={project.liveDemo} title={project.title} />
+                  <span className="absolute left-4 top-4 rounded-full border border-white/40 bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white backdrop-blur">
+                    {project.badge}
+                  </span>
                 </div>
-                <a
-                  href="#"
-                  className="mt-5 inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-600 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-indigo-300"
-                >
-                  Live Demo
-                </a>
-              </Card>
+
+                <div className="space-y-5 p-6 md:p-7">
+                  <h3 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 md:text-base">
+                    {project.description}
+                  </p>
+                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 md:text-base">
+                    {project.details}
+                  </p>
+                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 md:text-base">
+                    {project.impact}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-300"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <a
+                      href={project.liveDemo}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex rounded-xl bg-gradient-to-r from-indigo-600 to-blue-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:opacity-95"
+                    >
+                      Live Demo
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedProject((prev) =>
+                          prev === project.title ? null : project.title
+                        )
+                      }
+                      className="inline-flex rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:text-slate-200 dark:hover:border-indigo-400 dark:hover:text-indigo-300"
+                    >
+                      {expandedProject === project.title ? 'Hide Details' : 'View Details'}
+                    </button>
+                  </div>
+
+                  {expandedProject === project.title && (
+                    <div className="rounded-2xl border border-slate-200/80 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
+                      <p className="font-semibold text-slate-900 dark:text-white">
+                        Project Details
+                      </p>
+                      <p className="mt-2">
+                        This case study is structured around one goal: increasing qualified gym
+                        membership leads with a conversion-first layout and clearer trust signals.
+                      </p>
+                      <p className="mt-2">
+                        The build includes responsive sections, optimized loading, high-intent CTA
+                        placement, and sales-focused messaging to support better inquiry
+                        conversion.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </article>
             ))}
           </div>
         </section>
