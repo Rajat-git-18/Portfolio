@@ -74,8 +74,6 @@ const projects = [
     ],
     badge: 'Reservation-Focused Design',
     liveDemo: 'https://urbanbitesresturant.netlify.app/',
-    previewImage:
-      'https://s.wordpress.com/mshots/v1/https://urbanbitesresturant.netlify.app/?w=1600',
     expandedDetails: [
       'This project is framed around restaurant outcomes: more reservations, clearer menu discovery, and stronger engagement from first scroll to booking.',
       'The experience combines premium presentation with conversion discipline—strategic CTAs, responsive layouts, and fast-feeling interactions so guests take action.',
@@ -335,7 +333,9 @@ function App() {
             title="Projects"
             subtitle="Client-focused case studies built to drive measurable business growth."
           />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div
+            className={`grid w-full grid-cols-1 gap-6 md:grid-cols-2 ${projects.length >= 3 ? 'xl:grid-cols-3' : ''}`}
+          >
             {projects.map((project) => (
               <article
                 key={project.title}
