@@ -212,6 +212,34 @@ function App() {
   })
   const [activeSection, setActiveSection] = useState('home')
   const [expandedProject, setExpandedProject] = useState(null)
+  const [contactStatus, setContactStatus] = useState('idle')
+  const [contactError, setContactError] = useState('')
+
+  async function handleContactSubmit(event) {
+    event.preventDefault()
+    const form = event.currentTarget
+    setContactError('')
+    setContactStatus('sending')
+
+    try {
+      const body = new URLSearchParams(new FormData(form)).toString()
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+      })
+
+      if (!response.ok) {
+        throw new Error('Request failed')
+      }
+
+      setContactStatus('success')
+      form.reset()
+    } catch {
+      setContactStatus('idle')
+      setContactError('Something went wrong. Please try again or email me directly.')
+    }
+  }
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode)
@@ -478,28 +506,77 @@ function App() {
                 Phone / WhatsApp: +91-7015885212
               </p>
             </div>
-            <form className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <form
+              name="contact"
+              method="POST"
+              action="/"
+              data-netlify="true"
+              data-netlify-honeypot="bot-field"
+              onSubmit={handleContactSubmit}
+              className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+            >
+              <input type="hidden" name="form-name" value="contact" />
+              <p className="hidden" aria-hidden="true">
+                <label>
+                  Do not fill this out: <input name="bot-field" tabIndex={-1} autoComplete="off" />
+                </label>
+              </p>
               <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Name"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
-                />
-                <textarea
-                  placeholder="Message"
-                  rows="4"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
-                />
+                <div>
+                  <label htmlFor="contact-name" className="sr-only">
+                    Name
+                  </label>
+                  <input
+                    id="contact-name"
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="Name"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="contact-email" className="sr-only">
+                    Email
+                  </label>
+                  <input
+                    id="contact-email"
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="Email"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="contact-message" className="sr-only">
+                    Message
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    required
+                    placeholder="Message"
+                    rows="4"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                  />
+                </div>
+                {contactError ? (
+                  <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+                    {contactError}
+                  </p>
+                ) : null}
+                {contactStatus === 'success' ? (
+                  <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400" role="status">
+                    Thank you. Your message was sent successfully.
+                  </p>
+                ) : null}
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-blue-500 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:opacity-95"
+                  disabled={contactStatus === 'sending'}
+                  className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-blue-500 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Submit
+                  {contactStatus === 'sending' ? 'Sending…' : 'Submit'}
                 </button>
               </div>
             </form>
