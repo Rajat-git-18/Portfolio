@@ -50,9 +50,36 @@ const projects = [
       'Conversion-Focused UI',
     ],
     badge: 'Conversion-Focused Project',
-    image:
-      'https://s.wordpress.com/mshots/v1/https://urbanfit-gym.netlify.app/?w=1600',
     liveDemo: 'https://urbanfit-gym.netlify.app/',
+    expandedDetails: [
+      'This case study is structured around one goal: increasing qualified gym membership leads with a conversion-first layout and clearer trust signals.',
+      'The build includes responsive sections, optimized loading, high-intent CTA placement, and sales-focused messaging to support better inquiry conversion.',
+    ],
+  },
+  {
+    title: 'UrbanBites – Premium Restaurant Website',
+    description:
+      'Designed and developed a premium restaurant website focused on increasing table reservations and enhancing user experience.',
+    details:
+      'The website features a visually rich interface with high-quality food imagery, optimized menu presentation, and strategically placed call-to-actions to drive bookings.',
+    impact:
+      'Built with a strong focus on conversion, responsiveness, and modern UI/UX principles to help restaurants attract and engage customers effectively.',
+    tags: [
+      'React',
+      'Tailwind CSS',
+      'Framer Motion',
+      'Responsive Design',
+      'UI/UX Design',
+      'Conversion-Focused UI',
+    ],
+    badge: 'Reservation-Focused Design',
+    liveDemo: 'https://urbanbitesresturant.netlify.app/',
+    previewImage:
+      'https://s.wordpress.com/mshots/v1/https://urbanbitesresturant.netlify.app/?w=1600',
+    expandedDetails: [
+      'This project is framed around restaurant outcomes: more reservations, clearer menu discovery, and stronger engagement from first scroll to booking.',
+      'The experience combines premium presentation with conversion discipline—strategic CTAs, responsive layouts, and fast-feeling interactions so guests take action.',
+    ],
   },
 ]
 
@@ -103,6 +130,20 @@ function Card({ title, description, children }) {
       </p>
       {children}
     </article>
+  )
+}
+
+function ProjectImagePreview({ src, title }) {
+  return (
+    <div className="relative h-64 overflow-hidden border-b border-slate-200/80 bg-slate-950 sm:h-72 dark:border-slate-800">
+      <img
+        src={src}
+        alt={`${title} homepage preview`}
+        className="h-full w-full object-cover object-top transition duration-500 ease-out group-hover:scale-105"
+        loading="lazy"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/55 via-slate-900/10 to-transparent opacity-90 transition duration-300 group-hover:via-slate-900/20" />
+    </div>
   )
 }
 
@@ -294,20 +335,24 @@ function App() {
             title="Projects"
             subtitle="Client-focused case studies built to drive measurable business growth."
           />
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {projects.map((project) => (
               <article
                 key={project.title}
-                className="group overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-200/40 dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20 dark:hover:shadow-indigo-900/20"
+                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-200/40 dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20 dark:hover:shadow-indigo-900/20"
               >
-                <div className="relative">
-                  <ProjectPreview url={project.liveDemo} title={project.title} />
+                <div className="relative shrink-0">
+                  {project.previewImage ? (
+                    <ProjectImagePreview src={project.previewImage} title={project.title} />
+                  ) : (
+                    <ProjectPreview url={project.liveDemo} title={project.title} />
+                  )}
                   <span className="absolute left-4 top-4 rounded-full border border-white/40 bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white backdrop-blur">
                     {project.badge}
                   </span>
                 </div>
 
-                <div className="space-y-5 p-6 md:p-7">
+                <div className="flex flex-1 flex-col space-y-5 p-6 md:p-7">
                   <h3 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
                     {project.title}
                   </h3>
@@ -355,19 +400,13 @@ function App() {
                   </div>
 
                   {expandedProject === project.title && (
-                    <div className="rounded-2xl border border-slate-200/80 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
+                    <div className="space-y-2 rounded-2xl border border-slate-200/80 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
                       <p className="font-semibold text-slate-900 dark:text-white">
                         Project Details
                       </p>
-                      <p className="mt-2">
-                        This case study is structured around one goal: increasing qualified gym
-                        membership leads with a conversion-first layout and clearer trust signals.
-                      </p>
-                      <p className="mt-2">
-                        The build includes responsive sections, optimized loading, high-intent CTA
-                        placement, and sales-focused messaging to support better inquiry
-                        conversion.
-                      </p>
+                      {project.expandedDetails.map((paragraph, idx) => (
+                        <p key={idx}>{paragraph}</p>
+                      ))}
                     </div>
                   )}
                 </div>
