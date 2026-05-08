@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 
 const navItems = [
   { id: 'home', label: 'Home' },
@@ -36,6 +37,7 @@ const trustPoints = [
 const projects = [
   {
     title: 'UrbanFit Gym - High-Converting Fitness Website',
+    categoryLabel: 'Fitness Business Website',
     description:
       'Designed and developed a high-converting fitness website focused on increasing gym memberships.',
     details:
@@ -51,6 +53,11 @@ const projects = [
     ],
     badge: 'Conversion-Focused Project',
     liveDemo: 'https://urbanfit-gym.netlify.app/',
+    businessValue: [
+      'Enquiry-Focused Design',
+      'Conversion Messaging System',
+      'Trust-Building User Journey',
+    ],
     expandedDetails: [
       'This case study is structured around one goal: increasing qualified gym membership leads with a conversion-first layout and clearer trust signals.',
       'The build includes responsive sections, optimized loading, high-intent CTA placement, and sales-focused messaging to support better inquiry conversion.',
@@ -58,6 +65,7 @@ const projects = [
   },
   {
     title: 'UrbanBites – Premium Restaurant Website',
+    categoryLabel: 'Restaurant Business Website',
     description:
       'Designed and developed a premium restaurant website focused on increasing table reservations and enhancing user experience.',
     details:
@@ -74,9 +82,46 @@ const projects = [
     ],
     badge: 'Reservation-Focused Design',
     liveDemo: 'https://urbanbitesresturant.netlify.app/',
+    businessValue: [
+      'Reservation-Focused Design',
+      'Menu Discovery Optimization',
+      'Mobile Booking Experience',
+    ],
     expandedDetails: [
       'This project is framed around restaurant outcomes: more reservations, clearer menu discovery, and stronger engagement from first scroll to booking.',
       'The experience combines premium presentation with conversion discipline—strategic CTAs, responsive layouts, and fast-feeling interactions so guests take action.',
+    ],
+  },
+  {
+    title: 'UrbanNest Living – Premium PG Website',
+    categoryLabel: 'PG / Co-Living Business Website',
+    description:
+      'Designed and developed a modern PG/co-living website concept focused on improving online presence, increasing enquiries, and building trust with students and working professionals.',
+    details:
+      'The website features premium room showcases, enquiry-focused user flows, WhatsApp integration, responsive mobile-first design, and modern UI/UX principles tailored for the PG and rental living industry.',
+    impact:
+      'Built as a business-focused digital presence to help PG operators generate quality leads, improve trust signals, and increase occupancy through a cleaner online booking and enquiry experience.',
+    tags: [
+      'React',
+      'Tailwind CSS',
+      'Framer Motion',
+      'Responsive Design',
+      'UI/UX Design',
+      'Business Website',
+      'WhatsApp Integration',
+    ],
+    badge: 'Enquiry-Driven Design',
+    liveDemo: 'https://urbanstayzz.netlify.app/',
+    businessValue: [
+      'Enquiry-Focused Design',
+      'Mobile-First Experience',
+      'WhatsApp Lead Integration',
+      'Trust-Building UI',
+      'Room Showcase Optimization',
+    ],
+    expandedDetails: [
+      'UrbanNest Living is positioned as a lead-generation website concept for PG businesses that need stronger trust and enquiry conversion from students and professionals.',
+      'The page structure prioritizes room visibility, contact intent, and WhatsApp-first follow-up to reduce friction and improve qualified enquiry volume.',
     ],
   },
 ]
@@ -131,14 +176,22 @@ function Card({ title, description, children }) {
   )
 }
 
-function ProjectImagePreview({ src, title }) {
+function ProjectImagePreview({ sources, title, liveDemo }) {
+  const [sourceIndex, setSourceIndex] = useState(0)
+  const activeSource = sources[sourceIndex]
+
+  if (!activeSource) {
+    return <ProjectPreview url={liveDemo} title={title} />
+  }
+
   return (
     <div className="relative h-64 overflow-hidden border-b border-slate-200/80 bg-slate-950 sm:h-72 dark:border-slate-800">
       <img
-        src={src}
+        src={activeSource}
         alt={`${title} homepage preview`}
         className="h-full w-full object-cover object-top transition duration-500 ease-out group-hover:scale-105"
         loading="lazy"
+        onError={() => setSourceIndex((prev) => prev + 1)}
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/55 via-slate-900/10 to-transparent opacity-90 transition duration-300 group-hover:via-slate-900/20" />
     </div>
@@ -361,26 +414,59 @@ function App() {
             title="Projects"
             subtitle="Client-focused case studies built to drive measurable business growth."
           />
-          <div
-            className={`grid w-full grid-cols-1 gap-6 md:grid-cols-2 ${projects.length >= 3 ? 'xl:grid-cols-3' : ''}`}
-          >
-            {projects.map((project) => (
-              <article
+          <div className="grid w-full grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-3">
+            {projects.map((project, index) => (
+              <motion.article
                 key={project.title}
-                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-200/40 dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20 dark:hover:shadow-indigo-900/20"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.35, delay: index * 0.08 }}
+                whileHover={{ y: -6 }}
+                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/70 transition duration-300 hover:shadow-xl hover:shadow-indigo-200/40 dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20 dark:hover:shadow-indigo-900/20"
               >
                 <div className="relative shrink-0">
-                  {project.previewImage ? (
-                    <ProjectImagePreview src={project.previewImage} title={project.title} />
+                  {project.previewImages ? (
+                    <ProjectImagePreview
+                      sources={project.previewImages}
+                      title={project.title}
+                      liveDemo={project.liveDemo}
+                    />
                   ) : (
                     <ProjectPreview url={project.liveDemo} title={project.title} />
                   )}
+                  <div className="absolute inset-0 hidden items-end justify-center bg-slate-950/55 p-4 opacity-0 transition duration-300 group-hover:opacity-100 md:flex">
+                    <div className="flex gap-2">
+                      <a
+                        href={project.liveDemo}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-900 transition hover:bg-slate-200"
+                      >
+                        Live Demo
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setExpandedProject((prev) =>
+                            prev === project.title ? null : project.title
+                          )
+                        }
+                        className="inline-flex rounded-lg border border-white/50 bg-transparent px-3 py-2 text-xs font-semibold text-white transition hover:border-white hover:bg-white/10"
+                      >
+                        View Project
+                      </button>
+                    </div>
+                  </div>
                   <span className="absolute left-4 top-4 rounded-full border border-white/40 bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white backdrop-blur">
                     {project.badge}
                   </span>
                 </div>
 
                 <div className="flex flex-1 flex-col space-y-5 p-6 md:p-7">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-indigo-600 dark:text-indigo-300">
+                    {project.categoryLabel}
+                  </p>
                   <h3 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
                     {project.title}
                   </h3>
@@ -405,6 +491,22 @@ function App() {
                     ))}
                   </div>
 
+                  <div className="rounded-2xl border border-slate-200/80 bg-slate-50/90 p-3 dark:border-slate-700 dark:bg-slate-800/60">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                      Business Value
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {project.businessValue.map((point) => (
+                        <span
+                          key={point}
+                          className="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200"
+                        >
+                          {point}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
                   <div className="flex flex-wrap items-center gap-3">
                     <a
                       href={project.liveDemo}
@@ -423,7 +525,7 @@ function App() {
                       }
                       className="inline-flex rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:text-slate-200 dark:hover:border-indigo-400 dark:hover:text-indigo-300"
                     >
-                      {expandedProject === project.title ? 'Hide Details' : 'View Details'}
+                      {expandedProject === project.title ? 'Hide Project' : 'View Project'}
                     </button>
                   </div>
 
@@ -438,7 +540,7 @@ function App() {
                     </div>
                   )}
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         </section>
