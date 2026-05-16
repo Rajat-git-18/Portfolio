@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import FeaturedMomoJunction from './components/FeaturedMomoJunction.jsx'
 
 const navItems = [
   { id: 'home', label: 'Home' },
@@ -414,7 +415,10 @@ function App() {
             title="Projects"
             subtitle="Client-focused case studies built to drive measurable business growth."
           />
-          <div className="grid w-full grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-3">
+          <FeaturedMomoJunction />
+          <motion.div
+            className="grid w-full grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-3"
+          >
             {projects.map((project, index) => (
               <motion.article
                 key={project.title}
@@ -542,7 +546,7 @@ function App() {
                 </div>
               </motion.article>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         <section id="about" className="scroll-mt-28">
