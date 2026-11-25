@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
 const LIVE_URL = 'https://www.maximumhealthcare.co.in/'
+const PREVIEW_IMAGE = '/projects/maximum-healthcare-preview.png'
 
 const tags = [
   'Healthcare',
@@ -104,54 +104,31 @@ const fadeUp = {
 }
 
 function ProjectPreview() {
-  const [loaded, setLoaded] = useState(false)
-  const [failed, setFailed] = useState(false)
-  const timerRef = useRef(null)
-
-  useEffect(() => {
-    timerRef.current = setTimeout(() => setFailed(true), 5000)
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current)
-    }
-  }, [])
-
   return (
-    <motion.div
+    <motion.a
+      href={LIVE_URL}
+      target="_blank"
+      rel="noreferrer"
       {...fadeUp}
-      className="relative h-56 overflow-hidden rounded-2xl border border-white/10 bg-slate-950 sm:h-72 md:h-80 lg:h-full lg:min-h-[320px]"
+      className="group/preview relative block h-56 overflow-hidden rounded-2xl border border-white/10 bg-slate-950 sm:h-72 md:h-80 lg:h-full lg:min-h-[320px]"
     >
-      {!failed ? (
-        <iframe
-          src={LIVE_URL}
-          title="Maximum Healthcare live preview"
-          className="h-full w-full bg-white"
-          loading="lazy"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-          onLoad={() => {
-            setLoaded(true)
-            setFailed(false)
-            if (timerRef.current) clearTimeout(timerRef.current)
-          }}
-        />
-      ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex h-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-teal-950 via-slate-900 to-slate-950 px-6 text-center"
-        >
-          <p className="text-lg font-semibold text-white">Maximum Healthcare</p>
-          <p className="max-w-sm text-sm text-slate-300">
-            Premium medical tourism website — open Live Website for the full experience.
-          </p>
-        </motion.div>
-      )}
-      {!loaded && !failed && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-950/80 text-sm text-slate-300">
-          Loading preview…
+      <img
+        src={PREVIEW_IMAGE}
+        alt="Maximum Healthcare homepage preview"
+        className="h-full w-full object-cover object-top transition duration-500 ease-out group-hover/preview:scale-105"
+        loading="lazy"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/10 to-transparent transition duration-300 group-hover/preview:from-slate-950/85" />
+      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
+        <div>
+          <p className="text-sm font-semibold text-white">Maximum Healthcare</p>
+          <p className="text-xs text-slate-300">Homepage preview · click to open live site</p>
         </div>
-      )}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-    </motion.div>
+        <span className="rounded-lg bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur transition group-hover/preview:bg-white/25">
+          Open Live
+        </span>
+      </div>
+    </motion.a>
   )
 }
 
