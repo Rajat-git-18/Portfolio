@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
-const LIVE_URL = 'https://maximumhealthcare.in/'
+const LIVE_URL = 'https://www.maximumhealthcare.co.in/'
 
 const tags = [
   'Healthcare',
