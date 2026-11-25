@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import FeaturedMomoJunction from './components/FeaturedMomoJunction.jsx'
+import FeaturedMaximumHealthcare from './components/FeaturedMaximumHealthcare.jsx'
 
 const navItems = [
   { id: 'home', label: 'Home' },
@@ -415,7 +415,7 @@ function App() {
             title="Projects"
             subtitle="Client-focused case studies built to drive measurable business growth."
           />
-          <FeaturedMomoJunction />
+          <FeaturedMaximumHealthcare />
           <motion.div
             className="grid w-full grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-3"
           >
